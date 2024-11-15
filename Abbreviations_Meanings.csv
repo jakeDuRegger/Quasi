@@ -1,0 +1,37 @@
+abbreviation,meaning
+CC,coordinating conjunction
+CD,cardinal digit
+DT,determiner
+EX,existential there
+FW,foreign word
+IN,preposition/subordinating conjunction
+JJ,adjective (large)
+JJR,"adjective, comparative (larger)"
+JJS,"adjective, superlative (largest)"
+LS,list item marker
+MD,"modal (could, will)"
+NN,"noun, singular"
+NNS,noun plural
+NNP,"proper noun, singular"
+NNPS,"proper noun, plural"
+PDT,predeterminer
+POS,possessive ending (parent's)
+PRP,"personal pronoun (hers, herself, him, himself)"
+PRP dollar-sign,"possessive pronoun (her, his, mine, my, our)"
+RB,"adverb (occasionally, swiftly)"
+RBR,"adverb, comparative (greater)"
+RBS,"adverb, superlative (biggest)"
+RP,particle (about)
+SYM,symbol
+TO,infinite marker (to)
+UH,interjection (goodbye)
+VB,verb (ask)
+VBG,verb gerund (judging)
+VBD,verb past tense (pleaded)
+VBN,verb past participle (reunified)
+VBP,"verb, present tense not 3rd person singular(wrap)"
+VBZ,"verb, present tense with 3rd person singular (bases)"
+WDT,"wh-determiner (that, what)"
+WP,wh- pronoun (who)
+WP dollar-sign,possessive wh-pronoun
+WRB,wh- adverb (how)
