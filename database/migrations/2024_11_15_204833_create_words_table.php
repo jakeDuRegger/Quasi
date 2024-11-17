@@ -54,7 +54,7 @@ return new class extends Migration
                 'WP',  // wh-pronoun (who)
                 'WP$', // possessive wh-pronoun
                 'WRB'  // wh-adverb (how)
-            ]);
+            ])->nullable();
 
             $table->string('language')->default('en');
             $table->float('frequency')->default(0);

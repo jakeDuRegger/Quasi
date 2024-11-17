@@ -11,20 +11,32 @@
 <body>
 <main class="container mx-auto max-w-screen-lg px-16 lg:px-0">
     <h1 class="text-4xl font-bold my-16">
-        Quasi
+        <a href="/">
+            Quasi
+        </a>
     </h1>
-    <article class="my-6 grid grid-cols-2 place-items-baseline">
+    <article class="my-6 grid grid-cols-1 place-items-baseline">
         <section class="flex flex-col">
             <h2 class="text-2xl font-bold">{{ $word->name }}</h2>
             <p class="text-gray-500">Frequency: {{ $word->frequency }}</p>
         </section>
         <section class="grid">
                 <div class="my-6">
-                    <ul class="list-disc pl-6 text-gray-700">
+                    <ul class="list-none pl-4 text-gray-700">
                         @foreach ($parsedDefinitions as $parsed)
-                            <li class="mb-4">
-                                @if ($parsed['small'])
-                                    <small class="text-gray-600 italic block">{{ $parsed['small'] }}</small>
+                            <li class="my-2">
+                                @if ($parsed['small'] && $parsed['pos_string'])
+                                    <small class="text-gray-600 italic block">
+                                        {{ $parsed['pos_string'] }} {{ $parsed['small'] }}
+                                    </small>
+                                @elseif ($parsed['small'])
+                                    <small class="text-gray-600 italic block">
+                                        {{ $parsed['small'] }}
+                                    </small>
+                                @elseif ($parsed['pos_string'])
+                                    <small class="text-gray-600 italic block">
+                                        {{ $parsed['pos_string'] }}
+                                    </small>
                                 @endif
                                 <span>{{ $parsed['definition'] }}</span>
                             </li>
