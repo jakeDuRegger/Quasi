@@ -20,11 +20,11 @@ class DatabaseSeeder extends Seeder
         // Collects ~ 17,000 obscure words
 
         // Supplement part of speech from lexicon csv.
-        $words = Word::pluck('name')->toArray(); // Flat array of word names
+        $words = Word::whereNull('part_of_speech')->pluck('name')->toArray(); // Flat array of word names
         // Path to the CSV file
         $filePath = database_path('seeders/words_pos.csv');
         // Import part of speech for words.
-//        $this->importCsvToSqlite($filePath, $words);
+        $this->importCsvToSqlite($filePath, $words);
 
         // Fetch additional data from Datamuse API.
         $this->fetchDatamuseData();

@@ -45,7 +45,7 @@ Route::get('/', function () {
         goto start;
     }
 
-    return view('welcome', compact('word', 'parsedDefinitions'));
+    return view('word', compact('word', 'parsedDefinitions'));
 });
 
 
