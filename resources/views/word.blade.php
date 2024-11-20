@@ -8,14 +8,27 @@
     <!-- Styles / Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-<main class="container mx-auto max-w-screen-lg px-16 lg:px-0">
-    <h1 class="text-4xl font-bold italic my-16 border-b-2 border-b-amber-400">
-        <a href="/">
+<body class="container mx-auto max-w-screen-lg px-16 lg:px-1 max-h-dvh overflow-clip">
+<header class="flex flex-row items-baseline justify-between border-b-2 border-b-amber-400">
+    <h1 class="text-4xl font-bold italic mt-8">
+        <a href="/" class="outline-amber-400">
             quasi
         </a>
     </h1>
-    <article class="my-6 grid grid-cols-1 md:grid-cols-2 place-items-baseline">
+    <a href="/" class="outline-amber-400">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="24"
+             height="24"
+             fill="currentColor"
+             viewBox="0 0 256 256"
+             class="text-gray-500">
+            <path
+                d="M88,104H40a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V76.69L62.63,62.06A95.43,95.43,0,0,1,130,33.94h.53a95.36,95.36,0,0,1,67.07,27.33,8,8,0,0,1-11.18,11.44,79.52,79.52,0,0,0-55.89-22.77h-.45A79.56,79.56,0,0,0,73.94,73.37L59.31,88H88a8,8,0,0,1,0,16Zm128,48H168a8,8,0,0,0,0,16h28.69l-14.63,14.63a79.56,79.56,0,0,1-56.13,23.43h-.45a79.52,79.52,0,0,1-55.89-22.77,8,8,0,1,0-11.18,11.44,95.36,95.36,0,0,0,67.07,27.33H126a95.43,95.43,0,0,0,67.36-28.12L208,179.31V208a8,8,0,0,0,16,0V160A8,8,0,0,0,216,152Z"></path>
+        </svg>
+    </a>
+</header>
+<main>
+    <article class="my-8 grid grid-cols-1 md:grid-cols-2 place-items-baseline">
         <section class="flex flex-col">
             <h2 class="text-2xl font-bold">{{ $word->name }}</h2>
             <p class="text-gray-500">Frequency: {{ $word->frequency }}</p>
@@ -23,7 +36,7 @@
         <ul class="grid gap-y-4 my-6 justify-self-end list-decimal list-inside">
             @foreach ($parsedDefinitions as $parsed)
                 <li class="shadow-sm shadow-gray-500 max-w-prose font-semibold p-6 rounded grid">
-                    <span class="text-gray-700">{{ $parsed['definition'] }}</span>
+                    <span class="text-gray-700">{{ lcfirst($parsed['definition']) }}</span>
                     @if ($parsed['small'] && $parsed['pos_string'])
                         <small class="text-gray-600 italic block justify-self-end">
                             {{ $parsed['pos_string'] }} {{ $parsed['small'] }}
