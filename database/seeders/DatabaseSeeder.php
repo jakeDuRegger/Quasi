@@ -84,7 +84,8 @@ class DatabaseSeeder extends Seeder
                     // Increase timeout to 30 seconds
                     $response = Http::timeout(30)->get('https://api.datamuse.com/words', [
                         'sp' => $word->name,
-                        'md' => 'd,s,f',
+                        'md' => 'd,s,f,r',
+                        'ipa' => 1,
                     ]);
 
                     if ($response->ok()) {
@@ -96,21 +97,56 @@ class DatabaseSeeder extends Seeder
                             $definition = isset($firstResult['defs']) ? implode('; ', $firstResult['defs']) : null;
                             $syllables = $firstResult['numSyllables'] ?? null;
                             $frequency = null;
+                            $ipa_pronunciation = null;
+                            $pronunciation = null;
 
                             if (isset($firstResult['tags'])) {
                                 foreach ($firstResult['tags'] as $tag) {
                                     if (str_starts_with($tag, 'f:')) {
                                         $frequency = (float)substr($tag, 2);
-                                        break;
+                                    }
+                                    else if(str_starts_with($tag, 'pron:'))
+                                    {
+                                        $pronunciation = substr($tag, 5);
+                                    }
+                                    else if (str_starts_with($tag, 'ipa_pron:'))
+                                    {
+                                        $ipa_pronunciation = substr($tag, 9);
                                     }
                                 }
                             }
+
+                            $relatedData = [
+                                'related_meanings' => $this->fetchRelatedWords($word->name, 'ml'),
+                                'sounds_like' => $this->fetchRelatedWords($word->name, 'sl'),
+                                'spelled_like' => $this->fetchRelatedWords($word->name, 'sp'),
+                                'synonyms' => $this->fetchRelatedWords($word->name, 'rel_syn'),
+                                'antonyms' => $this->fetchRelatedWords($word->name, 'rel_ant'),
+                                'triggers' => $this->fetchRelatedWords($word->name, 'rel_trg'),
+                                'homophones' => $this->fetchRelatedWords($word->name, 'rel_hom'),
+                                'kind_of' => $this->fetchRelatedWords($word->name, 'rel_spc'),
+                                'more_general' => $this->fetchRelatedWords($word->name, 'rel_gen'),
+                                'part_of' => $this->fetchRelatedWords($word->name, 'rel_par'),
+                            ];
 
                             // Update the word record in the database
                             Word::where('id', $word->id)->update([
                                 'definition' => $definition,
                                 'syllables' => $syllables,
                                 'frequency' => $frequency,
+                                'pronunciation' => $pronunciation,
+                                'ipa_pronunciation' => $ipa_pronunciation,
+
+                                'related_meanings' => $relatedData['related_meanings'],
+                                'sounds_like' => $relatedData['sounds_like'],
+                                'spelled_like' => $relatedData['spelled_like'],
+                                'synonyms' => $relatedData['synonyms'],
+                                'antonyms' => $relatedData['antonyms'],
+                                'triggers' => $relatedData['triggers'],
+                                'homophones' => $relatedData['homophones'],
+                                'kind_of' => $relatedData['kind_of'],
+                                'more_general' => $relatedData['more_general'],
+                                'part_of' => $relatedData['part_of'],
                             ]);
                         }
 
@@ -134,6 +170,25 @@ class DatabaseSeeder extends Seeder
                 }
             }
             usleep(10000); // 100ms
+        }
+    }
+
+    private function fetchRelatedWords(string $word, string $relType): ?array
+    {
+        try {
+            $response = Http::timeout(30)->get('https://api.datamuse.com/words', [
+                $relType => $word,
+            ]);
+
+            if ($response->ok()) {
+                $data = $response->json();
+                return !empty($data) ? array_column($data, 'word') : [];
+            }
+
+            return [];
+        } catch (\Exception $e) {
+            $this->command->error("Error fetching '{$relType}' for '{$word}': {$e->getMessage()}");
+            return [];
         }
     }
 }

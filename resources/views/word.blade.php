@@ -28,9 +28,12 @@
     </a>
 </header>
 <main>
+    @dd($word)
     <article class="my-8 grid grid-cols-1 md:grid-cols-2 place-items-baseline">
         <section class="flex flex-col">
-            <h2 class="text-2xl font-bold">{{ $word->name }}</h2>
+            <h2 class="text-2xl font-bold">{{ $word->name }}
+            </h2>
+            <small class="font-semibold text-sm text-gray-700">{{$word->ipa_pronunciation}}</small>
             <p class="text-gray-500">Frequency: {{ $word->frequency }}</p>
         </section>
         <ul class="grid gap-y-4 my-6 justify-self-end list-decimal list-inside">

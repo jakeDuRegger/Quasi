@@ -16,7 +16,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->string('name')->unique();
-            $table->string('definition')->nullable();
             $table->enum('part_of_speech', [
                 'CC',  // coordinating conjunction
                 'CD',  // cardinal digit
@@ -57,9 +56,28 @@ return new class extends Migration
             ])->nullable();
 
             $table->string('language')->default('en');
-            $table->float('frequency')->default(0);
+
             $table->integer('syllables')->nullable();
             $table->text('example_sentence')->nullable();
+
+
+            // Datamuse API
+            $table->string('definition')->nullable();
+
+            $table->string('pronunciation')->nullable();
+            $table->string('ipa_pronunciation')->nullable();
+            $table->float('frequency')->default(0);
+
+            $table->jsonb('related_meanings')->nullable(); // Means like (ml)
+            $table->jsonb('sounds_like')->nullable(); // Sounds like (sl)
+            $table->jsonb('spelled_like')->nullable(); // Spelled like (sp)
+            $table->jsonb('synonyms')->nullable(); // Synonyms (rel_syn)
+            $table->jsonb('antonyms')->nullable(); // Antonyms (rel_ant)
+            $table->jsonb('triggers')->nullable(); // Triggers (rel_trg)
+            $table->jsonb('homophones')->nullable(); // Homophones (rel_hom)
+            $table->jsonb('kind_of')->nullable(); // "Kind of" relations (rel_spc)
+            $table->jsonb('more_general')->nullable(); // "More general than" relations (rel_gen)
+            $table->jsonb('part_of')->nullable(); // "Part of" relations (rel_par)
         });
     }
 

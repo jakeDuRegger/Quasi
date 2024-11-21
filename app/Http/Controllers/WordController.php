@@ -49,12 +49,13 @@ class WordController extends Controller
         ];
 
         start:
-        $word = \App\Models\Word::select('name', 'definition', 'frequency')
-            ->where('name', '!=', 'acatour') // bug with acatour...
-            ->whereRaw('LENGTH(name) > ?', [5]) // Name longer than 5 characters
+        $word = \App\Models\Word::
+            where('name', '!=', 'acatour') // bug with acatour... (actually looks like a lot of template errors...
+            ->whereRaw('LENGTH(name) > ?', [3]) // Name longer than 5 characters
             ->where('frequency', '>', 0)
             ->where('frequency', '<', 0.01)
-            ->whereRaw("definition like '%\[%' escape '\'")
+            ->whereNotNull('pronunciation')
+//            ->whereRaw("definition like '%\[%' escape '\'")
             ->inRandomOrder()                  // Randomize the order of results
             ->first();                         // Fetch only one random word
 
