@@ -36,7 +36,20 @@
         <ul class="grid gap-y-4 my-6 justify-self-end list-decimal list-inside">
             @foreach ($parsedDefinitions as $parsed)
                 <li class="shadow-sm shadow-gray-500 max-w-prose font-semibold p-6 rounded grid">
-                    <span class="text-gray-700">{{ lcfirst($parsed['definition']) }}</span>
+                    <p class="relative">
+                        <span class="text-gray-700">{{ lcfirst($parsed['definition']) }}</span>
+                        @isset($parsed['referencedWord'])
+                            <span class="group">
+                                <span class="text-amber-400 font-bold cursor-pointer">
+                                    {{ $parsed['referencedWord'] }}
+                                </span>
+                                {{-- Tooltip Content --}}
+                                <span class="absolute z-10 opacity-0 px-3 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg shadow-lg group-hover:block group-hover:opacity-100 top-full left-1/2 transform -translate-x-1/2 mt-1 transition-opacity">
+                                    {{ $parsed['referencedDefinition'] ?? 'No additional info' }}
+                                </span>
+                            </span>
+                        @endisset
+                    </p>
                     @if ($parsed['small'] && $parsed['pos_string'])
                         <small class="text-gray-600 italic block justify-self-end">
                             {{ $parsed['pos_string'] }} {{ $parsed['small'] }}

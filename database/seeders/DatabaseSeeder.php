@@ -65,6 +65,9 @@ class DatabaseSeeder extends Seeder
      */
     private function fetchDatamuseData(): void
     {
+        // 11/20/2024
+        // Found a bug from datamuse where it attempts to get a definition from a referenced term and it fails providing a template.
+        // [{"word":"achatour","score":18,"defs":["n\t(historical) A purveyor of provisions; a provedore. [:Template:SAFESUBST:–Template:SAFESUBST: c.] "]}]
         $words = Word::all();
 
         foreach ($words as $index => $word) {
