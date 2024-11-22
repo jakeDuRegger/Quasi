@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Word;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 
 class DatabaseSeeder extends Seeder
@@ -17,7 +16,18 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Run the spider...
+        $this->command->info('Starting PhrontisterySpider to fetch words...');
+
+//        Artisan::call('roach:run PhrontisterySpider');
+
+        $this->command->info('PhrontisterySpider completed. Data has been seeded.');
+
         // Collects ~ 17,000 obscure words
+        $this->command->info('Starting WikiSpider to fetch etymology data...');
+
+        Artisan::call('roach:run WikiSpider');
+
+        $this->command->info('WikiSpider completed. Data has been seeded.');
 
         // Supplement part of speech from lexicon csv.
         $words = Word::whereNull('part_of_speech')->pluck('name')->toArray(); // Flat array of word names
@@ -35,6 +45,8 @@ class DatabaseSeeder extends Seeder
      */
     private function importCsvToSqlite(string $filePath, array $existingWords): void
     {
+        $this->command->line("Loading part of speech data...");
+
         if (($handle = fopen($filePath, 'r')) !== false) {
             // Skip the header row
             fgetcsv($handle);
@@ -50,7 +62,7 @@ class DatabaseSeeder extends Seeder
 
                 // Update part_of_speech in the database
                 Word::where('name', $word)->update(['part_of_speech' => $partOfSpeech]);
-                $this->command->line('Updating ' . $word . ' part of speech to ' . $partOfSpeech );
+                //$this->command->line('Updating ' . $word . ' part of speech to ' . $partOfSpeech);
             }
 
             fclose($handle);
@@ -104,13 +116,9 @@ class DatabaseSeeder extends Seeder
                                 foreach ($firstResult['tags'] as $tag) {
                                     if (str_starts_with($tag, 'f:')) {
                                         $frequency = (float)substr($tag, 2);
-                                    }
-                                    else if(str_starts_with($tag, 'pron:'))
-                                    {
+                                    } else if (str_starts_with($tag, 'pron:')) {
                                         $pronunciation = substr($tag, 5);
-                                    }
-                                    else if (str_starts_with($tag, 'ipa_pron:'))
-                                    {
+                                    } else if (str_starts_with($tag, 'ipa_pron:')) {
                                         $ipa_pronunciation = substr($tag, 9);
                                     }
                                 }
@@ -190,5 +198,36 @@ class DatabaseSeeder extends Seeder
             $this->command->error("Error fetching '{$relType}' for '{$word}': {$e->getMessage()}");
             return [];
         }
+    }
+
+    // todo could fetch images... https://en.wiktionary.org/api/rest_v1/page/media-list/aardwolf
+    private function fetchEtymology()
+    {
+        // todo... https://en.wiktionary.org/api/rest_v1/#/Page%20content
+        try {
+            // Fetch the HTML content from the Wiktionary API
+            $response = Http::get("https://en.wiktionary.org/api/rest_v1/page/html/{$word}");
+
+            if ($response->ok()) {
+                $htmlContent = $response->body();
+
+                // Load the HTML into DOMDocument
+                $dom = new \DOMDocument();
+                @$dom->loadHTML($htmlContent); // Suppress warnings for malformed HTML
+
+                // Use XPath to find the "Etymology" section
+                $xpath = new \DOMXPath($dom);
+                $etymologyNodes = $xpath->query("//h2[.='Etymology']/following-sibling::*[not(self::h2)][1]");
+
+                if ($etymologyNodes->length > 0) {
+                    // Extract and return the etymology text
+                    return $dom->saveHTML($etymologyNodes->item(0));
+                }
+            }
+        } catch (\Exception $e) {
+            echo "Error fetching etymology for {$word}: " . $e->getMessage();
+        }
+
+        return null; // Return null if etymology not found
     }
 }

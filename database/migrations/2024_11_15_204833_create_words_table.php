@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
+            // PhrontisterySpider
             $table->string('name')->unique();
             $table->enum('part_of_speech', [
                 'CC',  // coordinating conjunction
@@ -78,6 +79,9 @@ return new class extends Migration
             $table->jsonb('kind_of')->nullable(); // "Kind of" relations (rel_spc)
             $table->jsonb('more_general')->nullable(); // "More general than" relations (rel_gen)
             $table->jsonb('part_of')->nullable(); // "Part of" relations (rel_par)
+
+            // Wiktionary API
+            $table->string('etymology')->nullable();
         });
     }
 
