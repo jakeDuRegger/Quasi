@@ -101,8 +101,10 @@ class WordController extends Controller
     {
         list($word, $parsedDefinitions) = $this->getWord();
 
+        $word->toArray();
+
         return view('word', [
-            'word' => $word,
+            'word' => (object) $word,
             'parsedDefinitions' => $parsedDefinitions,
         ]);
     }

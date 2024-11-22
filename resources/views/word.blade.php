@@ -8,9 +8,9 @@
     <!-- Styles / Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="container mx-auto max-w-screen-lg px-16 lg:px-1 max-h-dvh overflow-clip">
-<header class="flex flex-row items-baseline justify-between border-b-2 border-b-amber-400">
-    <h1 class="text-4xl font-bold italic mt-8">
+<body class="container mx-auto flex flex-col max-w-screen-lg px-16 lg:px-1 max-h-dvh">
+<header class="flex flex-row items-baseline justify-between border-b-2 border-b-amber-400 mt-8">
+    <h1 class="text-4xl font-bold italic">
         <a href="/" class="outline-amber-400">
             quasi
         </a>
@@ -27,16 +27,18 @@
         </svg>
     </a>
 </header>
-<main>
-    @dd($word)
-    <article class="my-8 grid grid-cols-1 md:grid-cols-2 place-items-baseline">
-        <section class="flex flex-col">
-            <h2 class="text-2xl font-bold">{{ $word->name }}
+<main class="mb-8">
+    <article class="my-8 grid grid-cols-1 place-items-baseline justify-items-center">
+        <!-- Word -->
+
+        <section class="flex flex-col justify-center text-center sticky top-0 bg-white w-full z-10 p-4">
+            <h2 class="text-3xl font-bold">{{ $word->name }}
             </h2>
-            <small class="font-semibold text-sm text-gray-700">{{$word->ipa_pronunciation}}</small>
-            <p class="text-gray-500">Frequency: {{ $word->frequency }}</p>
+            <small class="text-lg text-gray-500">{{$word->ipa_pronunciation}}</small>
+            <p class="text-sm text-gray-500">Frequency: {{ $word->frequency }}</p>
         </section>
-        <ul class="grid gap-y-4 my-6 justify-self-end list-decimal list-inside">
+        <!-- Definitions -->
+        <ul class="flex flex-col gap-y-4 mt-6 mb-8 list-decimal list-inside">
             @foreach ($parsedDefinitions as $parsed)
                 <li class="shadow-sm shadow-gray-500 max-w-prose font-semibold p-6 rounded grid">
                     <p class="relative">
@@ -47,7 +49,8 @@
                                     {{ $parsed['referencedWord'] }}
                                 </span>
                                 {{-- Tooltip Content --}}
-                                <span class="absolute z-10 opacity-0 px-3 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg shadow-lg group-hover:block group-hover:opacity-100 top-full left-1/2 transform -translate-x-1/2 mt-1 transition-opacity">
+                                <span
+                                    class="absolute z-10 opacity-0 px-3 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg shadow-lg group-hover:block group-hover:opacity-100 top-full left-1/2 transform -translate-x-1/2 mt-1 transition-opacity">
                                     {{ $parsed['referencedDefinition'] ?? 'No additional info' }}
                                 </span>
                             </span>
@@ -69,6 +72,63 @@
                 </li>
             @endforeach
         </ul>
+        <!-- More Info -->
+        <section class="flex flex-col justify-self-start my-8">
+            <dl class="max-w-prose grid gap-6 text-wrap">
+                <!-- Reusable logic for each section -->
+                @php
+                    $categories = [
+                        'Sounds similar to' => [
+                            'data' => json_decode($word->sounds_like, true),
+                            'example' => '"bardolatry", "bartoletti"',
+                        ],
+                        'Synonyms' => [
+                            'data' => json_decode($word->synonyms, true),
+                            'example' => '"worship", "devotion"',
+                        ],
+                        'Antonyms' => [
+                            'data' => json_decode($word->antonyms, true),
+                            'example' => '"disregard", "criticism"',
+                        ],
+                        'Homophones' => [
+                            'data' => json_decode($word->homophones, true),
+                            'example' => '"bard", "barred"',
+                        ],
+                        'Kind of like' => [
+                            'data' => json_decode($word->kind_of, true),
+                            'example' => '"artistic devotion", "theater practices"',
+                        ],
+                        'Part of' => [
+                            'data' => json_decode($word->part_of, true),
+                            'example' => '"bardolatry as part of Shakespearean studies"',
+                        ],
+                        'Associated words' => [
+                            'data' => json_decode($word->triggers, true),
+                            'example' => '"Shakespeare", "drama"',
+                        ],
+                        'Spelled similar to' => [
+                            'data' => json_decode($word->spelled_like, true),
+                            'example' => '"bardolatry", "bardology"',
+                        ],
+                        'More general' => [
+                            'data' => json_decode($word->more_general, true),
+                            'example' => '"literature", "performance arts"',
+                        ],
+                    ];
+                @endphp
+
+                @foreach ($categories as $title => $info)
+                    @if (!empty($info['data'])) <!-- Show section only if data is present -->
+                    <dt class="pb-1 border-b border-b-amber-400">
+                        {{ $title }} (e.g., {!! $info['example'] !!})
+                    </dt>
+                    <dd class="p-6 text-gray-600 shadow-sm shadow-gray-500 rounded">
+                        {{ implode(', ', $info['data']) }}
+                    </dd>
+                    @endif
+                @endforeach
+            </dl>
+        </section>
     </article>
 </main>
 </body>
