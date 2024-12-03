@@ -69,7 +69,7 @@ class WikiSpider extends BasicSpider
 
         // get the current word
         $word = basename($response->getRequest()->getUri());
-
+        $etymology = null;
         // get the etymology
         try {
             // Check if the element exists before calling text()
@@ -94,8 +94,7 @@ class WikiSpider extends BasicSpider
             Log::error("Exception for word $word: " . $e->getMessage());
         }
 
-        $etymology = trim($etymology) === '' ? null : $etymology;
-
+        $etymology = trim($etymology) !== '' ? $etymology : null;
 
         // Yield the parsed data
         yield ParseResult::item([

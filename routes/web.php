@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\WordController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,3 +11,6 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::get('/', [WordController::class, 'show']);
+
+Route::post('/favorites/{wordId}/add', [FavoriteController::class, 'addFavorite']);
+Route::delete('/favorites/{wordId}/remove', [FavoriteController::class, 'removeFavorite']);

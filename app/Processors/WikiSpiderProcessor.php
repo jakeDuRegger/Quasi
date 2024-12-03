@@ -14,9 +14,14 @@ class WikiSpiderProcessor implements ItemProcessorInterface
 
     public function processItem(ItemInterface $item): ItemInterface
     {
-        // Save the word and definition to the database
-        Word::where('name', '=', $item->get('word')
-        )->update(['etymology' => $item->get('etymology')],);
+        $etymology = $item->get('etymology');
+        $wordName = $item->get('word');
+
+        if (!is_null($etymology)) {
+            // Update the word in the database only if etymology is not null
+            Word::where('name', '=', $wordName)
+                ->update(['etymology' => $etymology]);
+        }
 
         return $item;
     }

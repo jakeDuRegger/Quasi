@@ -18,11 +18,15 @@ class DatabaseSeeder extends Seeder
         // Run the spider...
         $this->command->info('Starting PhrontisterySpider to fetch words...');
 
-//        Artisan::call('roach:run PhrontisterySpider');
-
-        $this->command->info('PhrontisterySpider completed. Data has been seeded.');
-
         // Collects ~ 17,000 obscure words
+        if (Word::count() === 0) {
+            // Run the spider to fetch words from the Phrontistery website
+            Artisan::call('roach:run PhrontisterySpider');
+            $this->command->info('PhrontisterySpider completed. Data has been seeded.');
+        } else {
+            $this->command->info('Words already exist in the database. Skipping PhrontisterySpider.');
+        }
+
         $this->command->info('Starting WikiSpider to fetch etymology data...');
 
         Artisan::call('roach:run WikiSpider');

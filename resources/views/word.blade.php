@@ -15,6 +15,18 @@
             quasi
         </a>
     </h1>
+    <button class="outline-amber-400"
+       id="favorite"
+       data-word-id="{{ $word->id }}">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="24"
+             height="24"
+             fill="currentColor"
+             viewBox="0 0 256 256">
+            <path
+                d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path>
+        </svg>
+    </button>
     <a href="/" class="outline-amber-400">
         <svg xmlns="http://www.w3.org/2000/svg"
              width="24"
@@ -30,7 +42,6 @@
 <main class="mb-8">
     <article class="my-8 grid grid-cols-1 place-items-baseline justify-items-center">
         <!-- Word -->
-
         <section class="flex flex-col justify-center text-center sticky top-0 bg-white w-full z-10 p-4">
             <h2 class="text-3xl font-bold">{{ $word->name }}
             </h2>
@@ -118,18 +129,39 @@
                 @endphp
 
                 @foreach ($categories as $title => $info)
-                    @if (!empty($info['data'])) <!-- Show section only if data is present -->
-                    <dt class="pb-1 border-b border-b-amber-400">
-                        {{ $title }} (e.g., {!! $info['example'] !!})
-                    </dt>
-                    <dd class="p-6 text-gray-600 shadow-sm shadow-gray-500 rounded">
-                        {{ implode(', ', $info['data']) }}
-                    </dd>
+                    @if (!empty($info['data']))
+                        <!-- Show section only if data is present -->
+                        <dt class="pb-1 border-b border-b-amber-400">
+                            {{ $title }} (e.g., {!! $info['example'] !!})
+                        </dt>
+                        <dd class="p-6 text-gray-600 shadow-sm shadow-gray-500 rounded">
+                            {{ implode(', ', $info['data']) }}
+                        </dd>
                     @endif
                 @endforeach
             </dl>
         </section>
     </article>
 </main>
+<script>
+    document.getElementById('favorite').addEventListener('click', async (event) => {
+        const wordId = event.target.getAttribute('data-word-id');
+
+        try {
+            const response = await fetch(`/favorites/${wordId}/add`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            alert(data.message);
+        } catch (error) {
+            console.error('Error adding favorite:', error);
+        }
+    });
+</script>
 </body>
 </html>

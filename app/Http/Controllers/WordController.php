@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class WordController extends Controller
 {
+    // TODO
+    // 1. Add a way to track progress of the user's (without a login) 'learning'.
+    // 2. Have achievements...
+    // 3. Track a favorites list.
+    // 4. Users may vote on a word if they have ever heard of it before.
+
     // get and remove referenced words
     private function referenceWords(&$parsedDefinitions)
     {
