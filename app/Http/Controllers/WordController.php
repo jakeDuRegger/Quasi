@@ -17,7 +17,19 @@ class WordController extends Controller
 
     public function show()
     {
+        $guestId = request()->cookie('guest_id', Str::uuid()); // Generate a guest ID if not set
+
         list($word, $parsedDefinitions) = $this->getWord();
+
+        // Check if the user has already voted on this word
+        $existingVote = Vote::where('guest_id', $guestId)
+            ->where('word_id', $word->id)
+            ->first();
+
+        if ($existingVote)
+        {
+            $seen = $existingVote->vote;
+        }
 
         $categories = $this->getCategories($word);
         $favorited = $word->isFavorited();
@@ -33,6 +45,7 @@ class WordController extends Controller
                 'categories' => $categories,
                 'favorites' => $favorites,
                 'favorited' => $favorited,
+                'vote' => $seen ?? null
             ]);
         }
 
@@ -41,7 +54,8 @@ class WordController extends Controller
             'parsedDefinitions' => $parsedDefinitions,
             'categories' => $categories,
             'favorites' => $favorites,
-            'favorited' => $favorited
+            'favorited' => $favorited,
+            'vote' => $seen ?? null
         ]);
     }
 
@@ -53,7 +67,7 @@ class WordController extends Controller
 
         $vote = $vote ? 1 : -1;
 
-        // Check if the user has already voted on this review
+        // Check if the user has already voted on this word
         $existingVote = Vote::where('guest_id', $guestId)
             ->where('word_id', $word->id)
             ->first();
@@ -63,7 +77,7 @@ class WordController extends Controller
             if ($existingVote->vote === $vote) {
                 $existingVote->delete();
 
-                // Recalculate the vote count for the review
+                // Recalculate the vote count for the word
                 return response()->json(['vote_count' => $word->vote_count]);
             }
 
