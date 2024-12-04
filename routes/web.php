@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::get('/', [WordController::class, 'show']);
+Route::post('/vote/{wordId}/{vote}', [WordController::class, 'vote']);
 
 Route::post('/favorites/{wordId}/add', [FavoriteController::class, 'addFavorite']);
 Route::delete('/favorites/{wordId}/remove', [FavoriteController::class, 'removeFavorite']);
+Route::delete('/favorites/remove', [FavoriteController::class, 'removeFavoritesList']);

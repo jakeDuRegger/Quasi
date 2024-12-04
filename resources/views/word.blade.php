@@ -15,9 +15,7 @@
             quasi
         </a>
     </h1>
-    <button class="outline-amber-400"
-       id="favorite"
-       data-word-id="{{ $word->id }}">
+    <button class="outline-amber-400">
         <svg xmlns="http://www.w3.org/2000/svg"
              width="24"
              height="24"
@@ -143,25 +141,5 @@
         </section>
     </article>
 </main>
-<script>
-    document.getElementById('favorite').addEventListener('click', async (event) => {
-        const wordId = event.target.getAttribute('data-word-id');
-
-        try {
-            const response = await fetch(`/favorites/${wordId}/add`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const data = await response.json();
-            alert(data.message);
-        } catch (error) {
-            console.error('Error adding favorite:', error);
-        }
-    });
-</script>
 </body>
 </html>
