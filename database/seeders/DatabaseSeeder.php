@@ -15,23 +15,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Run the spider...
-        $this->command->info('Starting PhrontisterySpider to fetch words...');
-
         // Collects ~ 17,000 obscure words
-        if (Word::count() === 0) {
-            // Run the spider to fetch words from the Phrontistery website
+        if (Word::count() === 0)
+        {
+            // Run the spider...
+            $this->command->info('Starting PhrontisterySpider to fetch words...');
             Artisan::call('roach:run PhrontisterySpider');
             $this->command->info('PhrontisterySpider completed. Data has been seeded.');
-        } else {
+        }
+        else
+        {
             $this->command->info('Words already exist in the database. Skipping PhrontisterySpider.');
         }
 
-        $this->command->info('Starting WikiSpider to fetch etymology data...');
+        if (Word::whereNotNull('etymology')->count() === 0)
+        {
+            $this->command->info('Starting WikiSpider to fetch etymology data...');
+            Artisan::call('roach:run WikiSpider');
+            $this->command->info('WikiSpider completed. Etymology data has been added to words.');
+        }
+        else
+        {
+            $this->command->info('Etymologies already exist in the database. Skipping WikiSpider.');
+        }
 
-        Artisan::call('roach:run WikiSpider');
-
-        $this->command->info('WikiSpider completed. Data has been seeded.');
 
         // Supplement part of speech from lexicon csv.
         $words = Word::whereNull('part_of_speech')->pluck('name')->toArray(); // Flat array of word names

@@ -314,40 +314,42 @@ const vote = async (wordId, voteValue) => {
                     </section>
                 </article>
             </main>
+            <!-- TODO Animate this -->
+            <Transition name="fade" mode="out-in">
+                <footer v-if="favorites.length > 0" class="my-8 bg-neutral-50 z-10 py-8">
+                    <!-- Favorites list -->
+                    <section class="border-b-2 border-amber-400">
+                        <header class="flex flex-row justify-between itesm-center">
+                            <h1 class="text-2xl font-bold italic mb-4">
+                                favorites
+                            </h1>
+                            <div class="flex flex-row items-center">
+                                <button @click="clearFavorites"
+                                        class="outline-amber-400 relative group hover:bg-amber-50 p-1 rounded-xl">
+                                    <ph-trash :size="24"/>
+                                </button>
+                                <button @click="collapse"
+                                        class="outline-amber-400 relative group hover:bg-amber-50 p-1 rounded-xl">
+                                    <ph-caret-down :size="24"/>
+                                </button>
+                            </div>
+
+                        </header>
+
+                        <div class="overflow-x-auto scrollbar-hidden">
+                            <ul class="flex flex-row flex-nowrap gap-8">
+                                <li v-for="favorite in favorites" :key="favorite.id"
+                                    class="flex-shrink-0 w-40 bg-neutral-50 z-10 p-4 text-center">
+                                    <p class="text-lg font-bold" :class="{ 'bg-amber-400 rounded-lg': favorite.id === word.id}">
+                                        {{ favorite.name }}</p>
+                                    <small class="text-sm text-gray-500">Frequency: {{ favorite.frequency }}</small>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </footer>
+            </Transition>
         </div>
-        <!-- TODO Animate this -->
-        <footer v-if="favorites.length > 0" class="my-8 sticky bottom-0 bg-neutral-50 w-full z-10 px-16 py-8">
-            <!-- Favorites list -->
-            <section class="border-b-2 border-amber-400">
-                <header class="flex flex-row justify-between itesm-center">
-                    <h1 class="text-2xl font-bold italic mb-4">
-                        favorites
-                    </h1>
-                    <div class="flex flex-row items-center">
-                        <button @click="clearFavorites"
-                                class="outline-amber-400 relative group hover:bg-amber-50 p-1 rounded-xl">
-                            <ph-trash :size="24"/>
-                        </button>
-                        <button @click="collapse"
-                                class="outline-amber-400 relative group hover:bg-amber-50 p-1 rounded-xl">
-                            <ph-caret-down :size="24"/>
-                        </button>
-                    </div>
-
-                </header>
-
-                <div class="overflow-x-auto scrollbar-hidden">
-                    <ul class="flex flex-row flex-nowrap gap-8">
-                        <li v-for="favorite in favorites" :key="favorite.id"
-                            class="flex-shrink-0 w-40 bg-neutral-50 z-10 p-4 text-center">
-                            <p class="text-lg font-bold" :class="{ 'bg-amber-400 rounded-lg': favorite.id === word.id}">
-                                {{ favorite.name }}</p>
-                            <small class="text-sm text-gray-500">Frequency: {{ favorite.frequency }}</small>
-                        </li>
-                    </ul>
-                </div>
-            </section>
-        </footer>
     </div>
 </template>
 
@@ -390,5 +392,29 @@ const vote = async (wordId, voteValue) => {
     }
 }
 
+
+.fade-enter-active, .fade-leave-active {
+    transition: all 0.266s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.fade-enter-from {
+    height: 0;
+    opacity: 0;
+}
+
+.fade-enter-to {
+    opacity: 1;
+    height: min-content;
+}
+
+.fade-leave-from {
+    opacity: 1;
+    height: min-content;
+}
+
+.fade-leave-to {
+    opacity: 0;
+    height: 0;
+}
 
 </style>
